@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	
+	<groupId>br.com.codersistemas</groupId>
+	<artifactId>coder-trade-status</artifactId>
+	<version>0.0.1-SNAPSHOT</version>
+	<name>coder-trade-status</name>
+	<description>Aplicativo para Gerenciamento de Trades</description>
+	<packaging>jar</packaging>
+
+	<properties>
+		<java.version>1.8</java.version>
+	</properties>
+
+	<dependencies>
+	</dependencies>
+
+	<build>
+		<finalName>${project.artifactId}</finalName>
+		<plugins>
+			<plugin>
+	            <groupId>org.apache.maven.plugins</groupId>
+	            <artifactId>maven-jar-plugin</artifactId>
+	            <version>2.4</version>
+	            <configuration>
+	                <archive>
+	                    <manifest>
+	                        <mainClass>br.com.codersistemas.codertradestatus.ui.PosicaoContasUI</mainClass>
+	                    </manifest>
+	                </archive>
+	            </configuration>
+        	</plugin>
+		</plugins>
+	</build>
+
+</project>
