@@ -1,16 +1,11 @@
 package br.com.codersistemas.codertradestatus.ui;
 
 import java.awt.BorderLayout;
-import java.awt.Color;
 import java.awt.FlowLayout;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.InputStreamReader;
-import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -26,14 +21,13 @@ import javax.swing.JTabbedPane;
 import javax.swing.JTable;
 import javax.swing.JTextArea;
 import javax.swing.border.EtchedBorder;
-import javax.swing.event.TableModelListener;
-import javax.swing.table.AbstractTableModel;
 import javax.swing.table.DefaultTableCellRenderer;
-import javax.swing.table.TableModel;
+import javax.swing.text.DefaultEditorKit;
 
 import br.com.codersistemas.codertradestatus.model.ItemCarteira;
+import br.com.codersistemas.codertradestatus.renderers.NumberCellRender;
+import br.com.codersistemas.codertradestatus.ui.models.PosicaoTableModel;
 import br.com.codersistemas.codertradestatus.utils.FileUtils;
-import br.com.codersistemas.codertradestatus.utils.NumberUtils;
 
 public class PosicaoContasUI extends JFrame {
 
@@ -51,6 +45,8 @@ public class PosicaoContasUI extends JFrame {
 	private JScrollPane scrollValoresAtivos;
 
 	private JButton btAtualizar;
+	private JButton btColar;
+	private JButton btLimpar;
 
 	public PosicaoContasUI() {
 		super ("Posição de Contas");
@@ -74,13 +70,26 @@ public class PosicaoContasUI extends JFrame {
 		painelBotoes = new JPanel();
 		painelBotoes.setLayout(new FlowLayout());
 		painelBotoes.setBorder(BorderFactory.createEtchedBorder(EtchedBorder.LOWERED));
+		
+		btLimpar = new JButton("Limpar");
+		btLimpar.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				limpar();
+			}
+		});
+		painelBotoes.add(btLimpar);
+		
+		btColar = new JButton(new DefaultEditorKit.PasteAction());
+		btColar.setText("Colar");
+		painelBotoes.add(btColar);
+		
 		btAtualizar = new JButton("Atualizar");
 		btAtualizar.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				atualizar();
 			}
-
 		});
 		painelBotoes.add(btAtualizar);
 		
@@ -123,13 +132,21 @@ public class PosicaoContasUI extends JFrame {
 		
 		DefaultTableCellRenderer rightRenderer = new DefaultTableCellRenderer();
 		rightRenderer.setHorizontalAlignment(JLabel.RIGHT);
+		
 		tabela.getColumnModel().getColumn(3).setCellRenderer(rightRenderer);
 		tabela.getColumnModel().getColumn(4).setCellRenderer(rightRenderer);
 		tabela.getColumnModel().getColumn(5).setCellRenderer(rightRenderer);
+		tabela.getColumnModel().getColumn(5).setCellRenderer(new NumberCellRender());
 		
 		tabbedPane.setSelectedIndex(0);
 	}
 
+	private void limpar() {
+		tabbedPane.setSelectedIndex(1);
+		textAreaValoresAtivos.setText("");
+		textAreaValoresAtivos.grabFocus();
+	}
+	
 	private Map<String, Float> gerarMapaDeCotacoes() {
 		String[] split = textAreaValoresAtivos.getText().split("\n");
 		List<String[]> listCotacoes = new ArrayList<>();
@@ -151,56 +168,7 @@ public class PosicaoContasUI extends JFrame {
 	}
 	
    public static void main(String[] args) {
-        PosicaoContasUI lc = new PosicaoContasUI();
+        new PosicaoContasUI();
     }
 }
 
-class PosicaoTableModel extends AbstractTableModel{
-	
-	private static final long serialVersionUID = 1L;
-	
-	private Object[] columnNames = new Object[] {"Nome", "Ativo", "Quantidade", "Valor Aquisição", "Cotacao Atual", "Resultado"};
-	
-	List<ItemCarteira> itensCarteira;
-	
-	public PosicaoTableModel(List<ItemCarteira> itensCarteira) {
-		super();
-		this.itensCarteira = itensCarteira;
-	}
-
-	@Override
-	public String getColumnName(int col) {
-        return columnNames[col].toString();
-    }
-
-	@Override
-	public int getRowCount() {
-		return itensCarteira.size();
-	}
-
-	@Override
-	public int getColumnCount() {
-		return columnNames.length;
-	}
-
-	@Override
-	public Object getValueAt(int rowIndex, int columnIndex) {
-		ItemCarteira itemCarteira = itensCarteira.get(rowIndex);
-		switch (columnIndex) {
-		case 0:
-			return itemCarteira.getNomeCliente();
-		case 1:
-			return itemCarteira.getNomeAtivo();
-		case 2:
-			return itemCarteira.getQuantidade();
-		case 3:
-			return NumberUtils.formatBR(new BigDecimal(itemCarteira.getValorAquisicao()));
-		case 4:
-			return itemCarteira.getCotacaoAtual();
-		case 5:
-			return itemCarteira.getResultado() != null ? NumberUtils.formatBR(new BigDecimal(itemCarteira.getResultado())) : null;
-		}
-		return null;
-	}
-	
-}
