@@ -108,7 +108,7 @@ public class PosicaoContasUI extends JFrame {
 
 	}
     
-	private void atualizar() {
+	private void atualizar() { 
 		
 		Map<String, Float> map = gerarMapaDeCotacoes();
 		
