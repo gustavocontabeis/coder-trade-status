@@ -1,8 +1,10 @@
 package br.com.codersistemas.codertradestatus.ui;
 
 import java.awt.BorderLayout;
+import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.GridLayout;
+import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
@@ -102,6 +104,7 @@ public class PosicaoContasUI extends JFrame {
 
 		setDefaultCloseOperation(EXIT_ON_CLOSE);
 		setSize(650, 600);
+		setLocationRelativeTo(null);
 		setVisible(true);
 		
 		atualizar();
@@ -118,9 +121,7 @@ public class PosicaoContasUI extends JFrame {
 			ItemCarteira e = new ItemCarteira(strings[0], strings[1], new Integer(strings[2]), new Float(strings[3]), null, null);
 			
 			Float valorAtual = map.get(e.getNomeAtivo());
-			if(valorAtual == null) {
-				System.out.println(e.getNomeAtivo());
-			}else {
+			if(valorAtual != null) {
 				float resultado = (valorAtual.floatValue() - e.getValorAquisicao().floatValue()) * e.getQuantidade().intValue();
 				e.setCotacaoAtual(valorAtual);
 				e.setResultado(resultado);
@@ -159,7 +160,6 @@ public class PosicaoContasUI extends JFrame {
 		for (String[] strings : listCotacoes) {
 			if(i++ != 0) {
 				if(strings.length>1) {
-					System.out.println(i+" "+strings[0]+" "+strings[1]);
 					map.put(strings[0], new Float(strings[1].replace(".", "").replace(",", ".")));
 				}
 			}

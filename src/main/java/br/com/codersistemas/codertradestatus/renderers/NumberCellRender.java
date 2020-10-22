@@ -21,9 +21,8 @@ public class NumberCellRender extends JLabel implements TableCellRenderer {
 		
 		setHorizontalAlignment(JLabel.RIGHT);
 		
-		System.out.println(value);
+		JLabel label = this;
 		if(value != null && !"".equals(value)) {
-			JLabel label = this;
 			setOpaque(true);
 			label.setText(String.valueOf(value));
 			Float floatValue = new Float(value
@@ -37,6 +36,8 @@ public class NumberCellRender extends JLabel implements TableCellRenderer {
 			}else {
 				label.setForeground(Color.BLUE);
 			}
+		}else {
+			label.setText("");
 		}
 		
 		return this;
