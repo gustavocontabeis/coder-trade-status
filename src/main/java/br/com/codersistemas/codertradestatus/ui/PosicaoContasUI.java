@@ -51,7 +51,7 @@ public class PosicaoContasUI extends JFrame {
 	private JButton btLimpar;
 
 	public PosicaoContasUI() {
-		super ("Posição de Contas");
+		super ("Contas");
 		criaJanela();
 	}
 
