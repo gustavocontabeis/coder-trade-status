@@ -38,20 +38,23 @@ public class PosicaoTableModel extends AbstractTableModel{
 
 	@Override
 	public Object getValueAt(int rowIndex, int columnIndex) {
-		ItemCarteira itemCarteira = itensCarteira.get(rowIndex);
-		switch (columnIndex) {
-		case 0:
-			return itemCarteira.getNomeCliente();
-		case 1:
-			return itemCarteira.getNomeAtivo();
-		case 2:
-			return itemCarteira.getQuantidade();
-		case 3:
-			return NumberUtils.formatBR(new BigDecimal(itemCarteira.getValorAquisicao()));
-		case 4:
-			return itemCarteira.getCotacaoAtual();
-		case 5:
-			return itemCarteira.getResultado() != null ? NumberUtils.formatBR(new BigDecimal(itemCarteira.getResultado())) : null;
+		if(!itensCarteira.isEmpty()) {
+			
+			ItemCarteira itemCarteira = itensCarteira.get(rowIndex);
+			switch (columnIndex) {
+			case 0:
+				return itemCarteira.getNomeCliente();
+			case 1:
+				return itemCarteira.getNomeAtivo();
+			case 2:
+				return itemCarteira.getQuantidade();
+			case 3:
+				return NumberUtils.formatBR(new BigDecimal(itemCarteira.getValorAquisicao()));
+			case 4:
+				return itemCarteira.getCotacaoAtual();
+			case 5:
+				return itemCarteira.getResultado() != null ? NumberUtils.formatBR(new BigDecimal(itemCarteira.getResultado())) : null;
+			}
 		}
 		return null;
 	}

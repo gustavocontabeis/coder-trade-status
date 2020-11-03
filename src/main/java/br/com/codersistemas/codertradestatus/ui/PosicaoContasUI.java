@@ -22,7 +22,11 @@ import javax.swing.JScrollPane;
 import javax.swing.JTabbedPane;
 import javax.swing.JTable;
 import javax.swing.JTextArea;
+import javax.swing.JTextField;
+import javax.swing.ListSelectionModel;
 import javax.swing.border.EtchedBorder;
+import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.ListSelectionListener;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.text.DefaultEditorKit;
 
@@ -30,25 +34,35 @@ import br.com.codersistemas.codertradestatus.model.ItemCarteira;
 import br.com.codersistemas.codertradestatus.renderers.NumberCellRender;
 import br.com.codersistemas.codertradestatus.ui.models.PosicaoTableModel;
 import br.com.codersistemas.codertradestatus.utils.FileUtils;
+import br.com.codersistemas.codertradestatus.utils.NumberUtils;
 
 public class PosicaoContasUI extends JFrame {
 
 	private static final long serialVersionUID = 1L;
 	
 	private JPanel painelTabela;
+	private JPanel painelCadastro;
 	private JPanel painelValoresAtivos;
 	private JScrollPane barraRolagem;
 	private JTable tabela;
 	private JPanel painelBotoes;
 	private JTabbedPane tabbedPane = new JTabbedPane();
-
 	private JTextArea textAreaValoresAtivos;
-
 	private JScrollPane scrollValoresAtivos;
 
 	private JButton btAtualizar;
 	private JButton btColar;
 	private JButton btLimpar;
+
+	private List<ItemCarteira> itensCarteira;
+
+	private JTextField txtNome;
+
+	private JTextField txtAtivo;
+
+	private JTextField txtQuantidade;
+
+	private JTextField txtValorAquisicao;
 
 	public PosicaoContasUI() {
 		super ("Posição de Contas");
@@ -58,10 +72,42 @@ public class PosicaoContasUI extends JFrame {
 	public void criaJanela(){
 
 		painelTabela = new JPanel();
-		painelTabela.setLayout(new GridLayout(1, 1));
+		painelTabela.setLayout(new BorderLayout());
 		tabela = new JTable();
+		tabela.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+		tabela.getSelectionModel().addListSelectionListener(new ListSelectionListener(){
+	        public void valueChanged(ListSelectionEvent event) {
+	            System.out.println(tabela.getValueAt(tabela.getSelectedRow(), 0).toString());
+	            ItemCarteira itemCarteira = itensCarteira.get(tabela.getSelectedRow());
+	            txtNome.setText(itemCarteira.getNomeCliente());
+	            txtAtivo.setText(itemCarteira.getNomeAtivo());
+	            txtQuantidade.setText(itemCarteira.getQuantidade().toString());
+	            txtValorAquisicao.setText(NumberUtils.formatBR(itemCarteira.getValorAquisicao()));
+	        }
+	    });
 		barraRolagem = new JScrollPane(tabela);
-		painelTabela.add(barraRolagem);
+		painelTabela.add(barraRolagem, BorderLayout.CENTER);
+		
+		painelCadastro = new JPanel(new GridLayout(6,2));
+		painelCadastro.setBorder(BorderFactory.createEtchedBorder(EtchedBorder.LOWERED));
+		painelCadastro.add(new JLabel("Nome"));
+		txtNome = new JTextField(20);
+		painelCadastro.add(txtNome);
+		painelCadastro.add(new JLabel("Ativo"));
+		txtAtivo = new JTextField(20);
+		painelCadastro.add(txtAtivo);
+		painelCadastro.add(new JLabel("Quantidade"));
+		txtQuantidade = new JTextField(20);
+		painelCadastro.add(txtQuantidade);
+		painelCadastro.add(new JLabel("Valor Aquisição"));
+		txtValorAquisicao = new JTextField(20);
+		painelCadastro.add(txtValorAquisicao);
+		painelCadastro.add(new JButton("Novo"));
+		painelCadastro.add(new JButton("Salvar"));
+		painelCadastro.add(new JButton("Excluir"));
+		painelCadastro.add(new JLabel(""));
+		
+		painelTabela.add(painelCadastro, BorderLayout.SOUTH);
 		
 		painelValoresAtivos = new JPanel();
 		painelValoresAtivos.setLayout(new GridLayout(1, 1));
@@ -116,7 +162,7 @@ public class PosicaoContasUI extends JFrame {
 		Map<String, Float> map = gerarMapaDeCotacoes();
 		
 		List<String[]> listCarteira = FileUtils.readFile(new File("./carteira.txt"), "\t");
-		List<ItemCarteira> itensCarteira = new ArrayList<>();
+		itensCarteira = new ArrayList<>();
 		for (String[] strings : listCarteira) {
 			ItemCarteira e = new ItemCarteira(strings[0], strings[1], new Integer(strings[2]), new Float(strings[3]), null, null);
 			
