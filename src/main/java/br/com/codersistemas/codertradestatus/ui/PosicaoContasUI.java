@@ -65,7 +65,7 @@ public class PosicaoContasUI extends JFrame {
 	private JTextField txtValorAquisicao;
 
 	public PosicaoContasUI() {
-		super ("Posição de Contas");
+		super ("Contas");
 		criaJanela();
 	}
 

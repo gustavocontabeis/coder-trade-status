@@ -1,0 +1,1 @@
+java -jar target/coder-trade-status.jar
