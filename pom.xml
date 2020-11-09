@@ -34,7 +34,7 @@
 				<configuration>
 					<archive>
 						<manifest>
-							<mainClass>br.com.codersistemas.codertradestatus.ui.PosicaoContasUI</mainClass>
+							<mainClass>br.com.codersistemas.codertradestatus.ui.TradeStatusUI</mainClass>
 						</manifest>
 					</archive>
 				</configuration>

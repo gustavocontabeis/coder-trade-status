@@ -1,10 +1,8 @@
 package br.com.codersistemas.codertradestatus.ui;
 
 import java.awt.BorderLayout;
-import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.GridLayout;
-import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
@@ -15,7 +13,7 @@ import java.util.Map;
 
 import javax.swing.BorderFactory;
 import javax.swing.JButton;
-import javax.swing.JFrame;
+import javax.swing.JComboBox;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
@@ -30,25 +28,32 @@ import javax.swing.event.ListSelectionListener;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.text.DefaultEditorKit;
 
+import br.com.codersistemas.codertradestatus.builder.PanelBuilder;
 import br.com.codersistemas.codertradestatus.model.ItemCarteira;
 import br.com.codersistemas.codertradestatus.renderers.NumberCellRender;
+import br.com.codersistemas.codertradestatus.service.ImportarAtivosClear;
 import br.com.codersistemas.codertradestatus.ui.models.PosicaoTableModel;
 import br.com.codersistemas.codertradestatus.utils.FileUtils;
 import br.com.codersistemas.codertradestatus.utils.NumberUtils;
 
-public class PosicaoContasUI extends JFrame {
+public class PosicaoContasPanel extends JPanel {
 
 	private static final long serialVersionUID = 1L;
 	
+	private PanelBuilder panelBuilder = new PanelBuilder();
+	
 	private JPanel painelTabela;
 	private JPanel painelCadastro;
-	private JPanel painelValoresAtivos;
+	private JPanel painelValoresAtivosProfit;
+	private JPanel painelValoresAtivosClear;
 	private JScrollPane barraRolagem;
 	private JTable tabela;
 	private JPanel painelBotoes;
 	private JTabbedPane tabbedPane = new JTabbedPane();
-	private JTextArea textAreaValoresAtivos;
-	private JScrollPane scrollValoresAtivos;
+	private JTextArea textAreaValoresAtivosProfit;
+	private JScrollPane scrollValoresAtivosProfit;
+	private JTextArea textAreaValoresAtivosClear;
+	private JScrollPane scrollValoresAtivosClear;
 
 	private JButton btAtualizar;
 	private JButton btColar;
@@ -64,8 +69,11 @@ public class PosicaoContasUI extends JFrame {
 
 	private JTextField txtValorAquisicao;
 
-	public PosicaoContasUI() {
-		super ("Contas");
+	private JButton btImportarClear;
+
+	private JComboBox<String> comboContaClear;
+
+	public PosicaoContasPanel() {
 		criaJanela();
 	}
 
@@ -109,23 +117,30 @@ public class PosicaoContasUI extends JFrame {
 		
 		painelTabela.add(painelCadastro, BorderLayout.SOUTH);
 		
-		painelValoresAtivos = new JPanel();
-		painelValoresAtivos.setLayout(new GridLayout(1, 1));
-		textAreaValoresAtivos = new JTextArea();
-		scrollValoresAtivos = new JScrollPane(textAreaValoresAtivos);
-		painelValoresAtivos.add(scrollValoresAtivos);
+		painelValoresAtivosClear = new JPanel();
+		painelValoresAtivosClear.setLayout(new BorderLayout());
+		textAreaValoresAtivosClear = new JTextArea();
+		scrollValoresAtivosClear = new JScrollPane(textAreaValoresAtivosClear);
+		painelValoresAtivosClear.add(scrollValoresAtivosClear, BorderLayout.CENTER);
+			
+		btImportarClear = new JButton("Importar");
+		btImportarClear.addActionListener(l->importarClear(l));
+		
+		comboContaClear = new JComboBox<>(new String[] {"FLAVIANE VIEL ZONATTO", "GIANA DA SILVA", "GUSTAVO DA SILVA", "LAUTENIR JOSE DA SILVA"});
+		JPanel painelValoresAtivosClearBotoes =	panelBuilder.row()
+				.add(new JLabel("Conta"))
+				.add(comboContaClear)
+				.add(btImportarClear)
+				.build();
+			
+		painelValoresAtivosClear.add(painelValoresAtivosClearBotoes, BorderLayout.SOUTH);
 		
 		painelBotoes = new JPanel();
 		painelBotoes.setLayout(new FlowLayout());
 		painelBotoes.setBorder(BorderFactory.createEtchedBorder(EtchedBorder.LOWERED));
 		
 		btLimpar = new JButton("Limpar");
-		btLimpar.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				limpar();
-			}
-		});
+		btLimpar.addActionListener(e->limpar(e));
 		painelBotoes.add(btLimpar);
 		
 		btColar = new JButton(new DefaultEditorKit.PasteAction());
@@ -141,22 +156,38 @@ public class PosicaoContasUI extends JFrame {
 		});
 		painelBotoes.add(btAtualizar);
 		
-		tabbedPane.addTab("Valores", painelTabela);
-		tabbedPane.addTab("Profit", painelValoresAtivos);
-        
-		getContentPane().setLayout(new BorderLayout());
-		getContentPane().add(tabbedPane, BorderLayout.CENTER);
-		getContentPane().add(painelBotoes, BorderLayout.SOUTH);
-
-		setDefaultCloseOperation(EXIT_ON_CLOSE);
-		setSize(650, 600);
-		setLocationRelativeTo(null);
-		setVisible(true);
+		painelValoresAtivosProfit = new JPanel();
+		painelValoresAtivosProfit.setLayout(new BorderLayout());
+		textAreaValoresAtivosProfit = new JTextArea();
+		scrollValoresAtivosProfit = new JScrollPane(textAreaValoresAtivosProfit);
+		painelValoresAtivosProfit.add(scrollValoresAtivosProfit, BorderLayout.CENTER);
+		painelValoresAtivosProfit.add(painelBotoes, BorderLayout.SOUTH);
 		
+		tabbedPane.addTab("Resultados", painelTabela);
+		tabbedPane.addTab("Importar dados Profit", painelValoresAtivosProfit);
+		tabbedPane.addTab("Importar dados Clear", painelValoresAtivosClear);
+        
+		setLayout(new BorderLayout());
+		add(tabbedPane, BorderLayout.CENTER);
+		
+
 		atualizar();
 
 	}
     
+	private void importarClear(ActionEvent l) {
+		ImportarAtivosClear iac = new ImportarAtivosClear();
+		List<ItemCarteira> itens = iac.importar(textAreaValoresAtivosClear.getText());
+		String nomeCliente = (String) comboContaClear.getSelectedItem();
+		itens.forEach(i->i.setNomeCliente(nomeCliente));
+		itens.forEach(i->{System.out.printf("%s\t%s\t%s\t%s\n", i.getNomeCliente(), i.getNomeAtivo(), i.getQuantidade(), i.getValorAquisicao());});
+		
+		StringBuilder sb = new StringBuilder();
+		itens.forEach(i->{sb.append(String.format("%s\t%s\t%s\t%s\n", i.getNomeCliente(), i.getNomeAtivo(), i.getQuantidade(), i.getValorAquisicao()));});
+		
+		textAreaValoresAtivosClear.setText(textAreaValoresAtivosClear.getText()+"\n"+sb.toString());
+	}
+
 	private void atualizar() { 
 		
 		Map<String, Float> map = gerarMapaDeCotacoes();
@@ -188,14 +219,14 @@ public class PosicaoContasUI extends JFrame {
 		tabbedPane.setSelectedIndex(0);
 	}
 
-	private void limpar() {
+	private void limpar(ActionEvent e) {
 		tabbedPane.setSelectedIndex(1);
-		textAreaValoresAtivos.setText("");
-		textAreaValoresAtivos.grabFocus();
+		textAreaValoresAtivosProfit.setText("");
+		textAreaValoresAtivosProfit.grabFocus();
 	}
 	
 	private Map<String, Float> gerarMapaDeCotacoes() {
-		String[] split = textAreaValoresAtivos.getText().split("\n");
+		String[] split = textAreaValoresAtivosProfit.getText().split("\n");
 		List<String[]> listCotacoes = new ArrayList<>();
 		for (int i = 0; i < split.length; i++) {
 			listCotacoes.add(split[i].split("\t"));
@@ -213,8 +244,5 @@ public class PosicaoContasUI extends JFrame {
 		return map;
 	}
 	
-   public static void main(String[] args) {
-        new PosicaoContasUI();
-    }
 }
 
