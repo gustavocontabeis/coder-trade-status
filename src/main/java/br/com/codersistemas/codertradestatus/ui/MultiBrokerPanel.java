@@ -88,19 +88,29 @@ public class MultiBrokerPanel extends JPanel {
 
 	private void executarRobo(String path)
 			throws AWTException, FileNotFoundException, IOException, InterruptedException {
+		
 		System.out.println("Executar Robo");
+		
 		File file = new File(path);
 		
 		Properties prop = new Properties();
 	    
-	    // load a properties file
 	    prop.load(new FileInputStream(file));
-	    
 	            
 	    // get all keys
 	    Set<Object> keySet = prop.keySet();
 	    
-	    BufferedReader br = new BufferedReader(new FileReader(prop.getProperty("file")));
+	    file = new File(prop.getProperty("file"));
+	    
+	    if(!prop.contains("file")) {
+	    	throw new RuntimeException("Propriedade file não encontada.");
+	    }
+	    
+	    if(!file.exists()) {
+	    	throw new RuntimeException("Arquivo "+prop.getProperty("file")+ " não encontrado");
+	    }
+	    
+	    BufferedReader br = new BufferedReader(new FileReader(file));
 		String st;
 		while ((st = br.readLine()) != null) {
 			

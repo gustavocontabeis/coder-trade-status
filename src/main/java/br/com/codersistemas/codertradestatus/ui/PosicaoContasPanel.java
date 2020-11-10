@@ -73,6 +73,8 @@ public class PosicaoContasPanel extends JPanel {
 
 	private JComboBox<String> comboContaClear;
 
+	private JTextField txtValorCaixa;
+
 	public PosicaoContasPanel() {
 		criaJanela();
 	}
@@ -127,9 +129,12 @@ public class PosicaoContasPanel extends JPanel {
 		btImportarClear.addActionListener(l->importarClear(l));
 		
 		comboContaClear = new JComboBox<>(new String[] {"FLAVIANE VIEL ZONATTO", "GIANA DA SILVA", "GUSTAVO DA SILVA", "LAUTENIR JOSE DA SILVA"});
+		txtValorCaixa = new JTextField(15);
 		JPanel painelValoresAtivosClearBotoes =	panelBuilder.row()
 				.add(new JLabel("Conta"))
 				.add(comboContaClear)
+				.add(new JLabel("Caixa"))
+				.add(txtValorCaixa)
 				.add(btImportarClear)
 				.build();
 			
@@ -183,6 +188,9 @@ public class PosicaoContasPanel extends JPanel {
 		itens.forEach(i->{System.out.printf("%s\t%s\t%s\t%s\n", i.getNomeCliente(), i.getNomeAtivo(), i.getQuantidade(), i.getValorAquisicao());});
 		
 		StringBuilder sb = new StringBuilder();
+		
+		sb.append(sb.append(String.format("%s\t%s\t%s\t%s\n", nomeCliente, "CAIXA", "1", txtValorCaixa.getText().replace(".", "").replace(",", "."))));
+		
 		itens.forEach(i->{sb.append(String.format("%s\t%s\t%s\t%s\n", i.getNomeCliente(), i.getNomeAtivo(), i.getQuantidade(), i.getValorAquisicao()));});
 		
 		textAreaValoresAtivosClear.setText(textAreaValoresAtivosClear.getText()+"\n"+sb.toString());
