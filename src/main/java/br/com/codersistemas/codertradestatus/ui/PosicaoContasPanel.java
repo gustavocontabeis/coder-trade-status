@@ -184,12 +184,13 @@ public class PosicaoContasPanel extends JPanel {
 		ImportarAtivosClear iac = new ImportarAtivosClear();
 		List<ItemCarteira> itens = iac.importar(textAreaValoresAtivosClear.getText());
 		String nomeCliente = (String) comboContaClear.getSelectedItem();
+		itens.add(new ItemCarteira(nomeCliente, "CAIXA", 1, 0f, 0f, 0f));
 		itens.forEach(i->i.setNomeCliente(nomeCliente));
 		itens.forEach(i->{System.out.printf("%s\t%s\t%s\t%s\n", i.getNomeCliente(), i.getNomeAtivo(), i.getQuantidade(), i.getValorAquisicao());});
 		
 		StringBuilder sb = new StringBuilder();
 		
-		sb.append(sb.append(String.format("%s\t%s\t%s\t%s\n", nomeCliente, "CAIXA", "1", txtValorCaixa.getText().replace(".", "").replace(",", "."))));
+		//sb.append(sb.append(String.format("%s\t%s\t%s\t%s\n", nomeCliente, "CAIXA", "1", txtValorCaixa.getText().replace(".", "").replace(",", "."))));
 		
 		itens.forEach(i->{sb.append(String.format("%s\t%s\t%s\t%s\n", i.getNomeCliente(), i.getNomeAtivo(), i.getQuantidade(), i.getValorAquisicao()));});
 		

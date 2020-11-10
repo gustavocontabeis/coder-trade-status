@@ -76,7 +76,7 @@ public class MultiBrokerPanel extends JPanel {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				try {
-					executarRobo(file.getAbsolutePath());
+					executarRobo(file.getPath());
 				} catch (Exception e1) {
 					e1.printStackTrace();
 					JOptionPane.showMessageDialog(null, e1.getMessage());
@@ -102,7 +102,7 @@ public class MultiBrokerPanel extends JPanel {
 	    
 	    file = new File(prop.getProperty("file"));
 	    
-	    if(!prop.contains("file")) {
+	    if(!prop.containsKey("file")) {
 	    	throw new RuntimeException("Propriedade file não encontada.");
 	    }
 	    
