@@ -156,7 +156,7 @@ public class PosicaoContasPanel extends JPanel {
 		btAtualizar.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				atualizar();
+				atualizarProfit();
 			}
 		});
 		painelBotoes.add(btAtualizar);
@@ -176,7 +176,7 @@ public class PosicaoContasPanel extends JPanel {
 		add(tabbedPane, BorderLayout.CENTER);
 		
 
-		atualizar();
+		atualizarProfit();
 
 	}
     
@@ -196,9 +196,13 @@ public class PosicaoContasPanel extends JPanel {
 		textAreaValoresAtivosClear.setText(textAreaValoresAtivosClear.getText()+"\n"+sb.toString());
 	}
 
-	private void atualizar() { 
+	private void atualizarProfit() {
+		
+		System.out.println("Atualizar");
 		
 		Map<String, Float> map = gerarMapaDeCotacoes();
+		
+		System.out.println("Mapa de cotações: " + map.size()+" ítens.");
 		
 		List<String[]> listCarteira = FileUtils.readFile(new File("./carteira.txt"), "\t");
 		itensCarteira = new ArrayList<>();
@@ -210,6 +214,8 @@ public class PosicaoContasPanel extends JPanel {
 				float resultado = (valorAtual.floatValue() - e.getValorAquisicao().floatValue()) * e.getQuantidade().intValue();
 				e.setCotacaoAtual(valorAtual);
 				e.setResultado(resultado);
+			} else {
+				System.out.println(e.getNomeAtivo()+" não encontrado.");
 			}
 			
 			itensCarteira.add(e);
